@@ -15,10 +15,12 @@ Finally I realised I don't have to have JS cycle through the DOM changing classe
 
 ## Background parallax scroller ##
 ### Background creation ###
-Orignal 200 pizzas were being created no matter how many were to be displayed on screen.
+Orignally 200 pizzas were being created no matter how many were to be displayed on screen.
 So I changed this to instead check the screen size, and ensure that only enough pizza divs were created to fill the screen.
-On window resize th ading, and one of the first optomisitions I made was to use 'transform: translateX' instead of 'styel.left'.
-There were a number of website that claims this would make it much faster and so I went with it. However in later testing I found it to be generally slower,
+On window resize it deletes the pizzas, recalulates how many is needed and creatres them again.
+
+One of the first optomisitions I made for movement was to use 'transform: translateX' instead of 'styel.left'.
+There were a number of website that claims this would make it much faster and so I went with it. However in later testing I found it to be generally the same speed or slower,
 especially in other browsers.
 
 Maybe the most interesting thing I saw from testing was that each browser and platform can find different JS code faster.
@@ -31,11 +33,14 @@ Screenshots of FPS using devtools:
 
 Another realisation was that when optomising code, you need to check each optimisation individual if you haven't tried them before. I just assumed translateX would be faster because that is what it was telling me and then made other optimisations at the same time. Thus I couldn't see what change was making improvements when I was testing the code.
 
+I also tested the best way to grab a DOM object and found getElementByID and getElementsByClass were must faster than the new querySelector method: http://jsperf.com/getelementbyid-vs-queryselector/137
+I therefore updated all the selectors to use the old school method.
+
 By far the most important optimisation for FPS in Chrome was a CSS hack by David Walsh (http://davidwalsh.name/translate3d). It forced each pizza to be in it's own composite layer and this saw a huge speed increase. When I first tried this it didn't work as I applied the translateX inline and therefore was appearing after page load. It turned out before Chrome rendered the DOM CSSOM it needed to know that this were 'transform' layers.
 
-While the final code may not be as future proof, as the assignment was to optomise for speed I made the decision to go with style.left over translate. Not using translate also means losing the subpixel movement, however in practise as this is a background image moving in a horizontal line it doesn't make much difference.
+While the final code may not be as future proof, as the assignment was to optimise for speed I made the decision to go with style.left over translate. Not using translate also means losing the subpixel movement, however in practise as this is a background image moving in a horizontal line it doesn't make much difference.
 
-Finally for download speed, the CSS and JS was minified and place onto the single page. Images were compressed and resized.
+Finally for download speed, the CSS and JS was minified and placed onto the single page. Images were compressed and resized.
 
 See code for more comments.
 
