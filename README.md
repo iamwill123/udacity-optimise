@@ -9,22 +9,15 @@ Nothing special needed. Download. Unzip. And run.
 
 # Part 2 - Solution - Pizza FPS #
 ## Change Pizza Size ##
-I created 3 classes to handle the 3 sizes. Then used a nested for statement cycle through all elements and add the new size class and also cycle through the current classes and remove any classes left over.
+Originally I just removed some of the code to make it resize faster. My next idea was to create 3 classes and apply the new classes + remove old classes to resize pizza which bought it down to about 4-8ms to resize pizza.
+
+Finally I realised I don't have to have JS cycle through the DOM changing classes. Instead of can just create and modify the class of the container and use CSS specification to change the sizes which is much faster.
 
 ## Background parallax scroller ##
 ### Background creation ###
 Orignal 200 pizzas were being created no matter how many were to be displayed on screen.
 So I changed this to instead check the screen size, and ensure that only enough pizza divs were created to fill the screen.
-On window resize this is recalculated and new pizzas are made.
-
-I also resized the image and compressed, so that the browser was not changing the image size.
-
-### Background movement ###
-I spent a lot of time trying different styles of loops and moving calculations out of the for loop. Trying while loops and other things.
-At one point adding a lot of the calcuations at the time of the creation of the div.
-However, I found that no matter what I did it had very little affect. At least in the chrome browser.
-
-I spent a lot of time reading, and one of the first optomisitions I made was to use 'transform: translateX' instead of 'styel.left'.
+On window resize th ading, and one of the first optomisitions I made was to use 'transform: translateX' instead of 'styel.left'.
 There were a number of website that claims this would make it much faster and so I went with it. However in later testing I found it to be generally slower,
 especially in other browsers.
 
@@ -33,8 +26,8 @@ For example, using translateX was over 50% slower on IE11. On chrome mobile, the
 
 JSPref test can be found at: http://jsperf.com/udacity-optimise-loop-test/2
 Screenshots of FPS using devtools: 
-* Using style.left:
-* Using translateX: 
+* Using style.left: http://ro-savage.github.io/udacity-optimise/views/images/style-left.jpg
+* Using translateX: http://ro-savage.github.io/udacity-optimise/views/images/translate.jpg
 
 Another realisation was that when optomising code, you need to check each optimisation individual if you haven't tried them before. I just assumed translateX would be faster because that is what it was telling me and then made other optimisations at the same time. Thus I couldn't see what change was making improvements when I was testing the code.
 

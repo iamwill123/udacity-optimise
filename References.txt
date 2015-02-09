@@ -21,5 +21,7 @@ http://addyosmani.com/blog/performance-optimisation-with-timeline-profiles/
 https://developer.chrome.com/devtools/docs/rendering-settings
 https://developer.chrome.com/devtools/docs/timeline
 
-Self-Created references:
+Created JSPref's:
+http://jsperf.com/for-loop-optimisation
 Fastest loops - http://jsperf.com/fastest-array-loops-in-javascript/329
+

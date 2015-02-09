@@ -373,7 +373,6 @@ var pizzaElementGenerator = function(i) {
   pizzaDescriptionContainer = document.createElement("div");
 
   pizzaContainer.classList.add("randomPizzaContainer");
-  pizzaContainer.classList.add("pizzaMedium");
   pizzaContainer.id = "pizza" + i;                // gives each pizza element a unique id
   pizzaImageContainer.classList.add("col-md-6");
 
@@ -401,50 +400,26 @@ var pizzaElementGenerator = function(i) {
 var resizePizzas = function(size) { 
   window.performance.mark("mark_start_resize");   // User Timing API function
 
-  // 0 
-  var pizzaClasses = ["pizzaSmall", "pizzaMedium", "pizzaLarge"];
+  var pizzaRandomDiv = document.getElementById("randomPizzas");
 
-  // Change text
-  function getPizzaSize(size) {
+    // We are update the class of the pizza container
+    // then using CSS classes to actually resize the pizzas themself with a #id.class .class {} selector
     switch(size) {
-      case "0":
-        document.querySelector("#pizzaSize").innerText = "Small";
-        return;
       case "1":
-        document.querySelector("#pizzaSize").innerText = "Medium";
-        return;
+        document.getElementById("pizzaSize").innerHTML = "Small"; // Changed from querySelector to much faster getElementByID - http://jsperf.com/getelementbyid-vs-queryselector/137
+        pizzaRandomDiv.className = "row smallPizzas"; // using instead of add and remove class for faster operations. Usually would add/remove classes.
+        break;
       case "2":
-        document.querySelector("#pizzaSize").innerText = "Large";
-        return;
+        document.getElementById("pizzaSize").innerHTML = "Medium";
+        pizzaRandomDiv.className = "row mediumPizzas";
+        break;
+      case "3":
+        document.getElementById("pizzaSize").innerHTML = "Large";
+        pizzaRandomDiv.className  = "row largePizzas";
+        break;
       default:
         console.log("bug in changeSliderLabel");
     }
-  }
-
-  
-  getPizzaSize(size);
-
-  // Iterates through pizza elements on the page and changes their widths
-  function changePizzaSizes(size, pizzaClasses) {
-    
-    var newPizzaClass = pizzaClasses[size]; // cache pizza class
-
-    var l = document.querySelectorAll(".randomPizzaContainer").length; // cache length
-    
-    for (var i = 0; i < l; i++) {
-      var el = document.querySelectorAll(".randomPizzaContainer")[i]
-      
-      // remove any previous classes
-      for (var j = 0, len = pizzaClasses.length; j < len; j++){
-        el.classList.remove(pizzaClasses[j]);
-      }
-
-      // add new pizza size class
-      el.classList.add(newPizzaClass);
-    }
-  }
-
-  changePizzaSizes(size, pizzaClasses);
 
   // User Timing API is awesome
   window.performance.mark("mark_end_resize");
@@ -515,13 +490,14 @@ function updatePositions() {
   frame++;
   window.performance.mark("mark_start_frame");
 
-  var items = document.querySelectorAll('.mover'); // Chache items
+  var items = document.getElementsByClassName('mover'); // Cache items
   var len = items.length; // Cache length
   var phaseInt = document.body.scrollTop / 1250; // Move calulation out of loop
 
   for (var i = 0; i < len; i++) {
-    var move = Math.sin(phaseInt + (i % 5)) * 100 + items[i].basicLeft; // calculations are done individually
-    items[i].style.left = move + 'px';
+    var move = Math.sin(phaseInt + (i % 5)) * 100; // Calcuations that are on on invidivual basis
+    //items[i].style.left = move + items[i].basicLeft + 'px'; // move the item
+    items[i].style.transform = "translateX(" + move + "px)";
   }
 
   updatePositionsTick = false;
@@ -553,17 +529,19 @@ function createBGPizza() {
     elem.style.left = left + 'px';
     elem.basicLeft = left;
     elem.style.top = (Math.floor(i / cols) * s) + 'px';
-    document.querySelector("#movingPizzas1").appendChild(elem);
+    document.getElementById("movingPizzas1").appendChild(elem);
   }
   updatePositions();
 };
 
 function resizeBGPizza() {
-  var ellist = document.querySelectorAll('.mover');
+  document.getElementById("movingPizzas1").innerHTML = "";
+  /*
+  var ellist = document.getElementsByClassName('.mover');
   var l = ellist.length;
   for (var i = 0; i < l; i++) {
     ellist[i].remove();
-  }
+  }*/
   createBGPizza();
 }
 
