@@ -1,3 +1,7 @@
+# Installation #
+
+Nothing special needed. Download. Unzip. And run.
+
 # Part 1 - Solution - PageSpeed #
 * Minify CSS and placed into page head. Except for print css which now uses media tag. To minimise amount of downloads
 * Change JS loading to async
@@ -13,6 +17,8 @@ Orignal 200 pizzas were being created no matter how many were to be displayed on
 So I changed this to instead check the screen size, and ensure that only enough pizza divs were created to fill the screen.
 On window resize this is recalculated and new pizzas are made.
 
+I also resized the image and compressed, so that the browser was not changing the image size.
+
 ### Background movement ###
 I spent a lot of time trying different styles of loops and moving calculations out of the for loop. Trying while loops and other things.
 At one point adding a lot of the calcuations at the time of the creation of the div.
@@ -25,11 +31,44 @@ especially in other browsers.
 Maybe the most interesting thing I saw from testing was that each browser and platform can find different JS code faster.
 For example, using translateX was over 50% slower on IE11. On chrome mobile, the test that had been coming last on desktop browsers was the fastest. On chrome desktop none of the rewrite made any real difference.
 
+JSPref test can be found at: http://jsperf.com/udacity-optimise-loop-test/2
+Screenshots of FPS using devtools: 
+* Using style.left:
+* Using translateX: 
+
 Another realisation was that when optomising code, you need to check each optimisation individual if you haven't tried them before. I just assumed translateX would be faster because that is what it was telling me and then made other optimisations at the same time. Thus I couldn't see what change was making improvements when I was testing the code.
 
 By far the most important optimisation for FPS in Chrome was a CSS hack by David Walsh (http://davidwalsh.name/translate3d). It forced each pizza to be in it's own composite layer and this saw a huge speed increase. When I first tried this it didn't work as I applied the translateX inline and therefore was appearing after page load. It turned out before Chrome rendered the DOM CSSOM it needed to know that this were 'transform' layers.
 
-While the final code may not be as future proof, as the assignment was to optomise for speed I made the decision to go with style.left over translate.
+While the final code may not be as future proof, as the assignment was to optomise for speed I made the decision to go with style.left over translate. Not using translate also means losing the subpixel movement, however in practise as this is a background image moving in a horizontal line it doesn't make much difference.
+
+See code for more comments.
+
+# References #
+## Animation ##
+* http://jankfree.org/
+* http://www.html5rocks.com/en/tutorials/speed/animations/
+* http://www.paulirish.com/2012/why-moving-elements-with-translate-is-better-than-posabs-topleft/
+
+## Painting ##
+* http://www.html5rocks.com/en/tutorials/speed/unnecessary-paints/
+* http://www.html5rocks.com/en/tutorials/speed/rendering/
+* http://www.html5rocks.com/en/tutorials/speed/high-performance-animations/
+* https://piazza.com/class/i0sf6tsmg0r7do?cid=1200
+* http://davidwalsh.name/translate3d
+
+Scrolling:
+* http://www.html5rocks.com/en/tutorials/speed/scrolling/
+
+Testing performance
+* http://aerotwist.com/blog/dont-guess-it-test-it/
+* http://addyosmani.com/blog/performance-optimisation-with-timeline-profiles/
+* https://developer.chrome.com/devtools/docs/rendering-settings
+* https://developer.chrome.com/devtools/docs/timeline
+
+Created JSPref's:
+* http://jsperf.com/for-loop-optimisation
+* http://jsperf.com/fastest-array-loops-in-javascript/329
 
 
 

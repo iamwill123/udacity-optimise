@@ -507,76 +507,24 @@ function requestTick() {
   
 }
 
+// Updates position of pizzas
+// Choose to use style.left from the recorded start position of basicLeft as it ran same speed
+// as translateX in Chrome but much faster in IE and a little faster in firefox
+// http://jsperf.com/udacity-optimise-loop-test & testing using chrome DevTools
 function updatePositions() {
   frame++;
   window.performance.mark("mark_start_frame");
 
-  var items = document.querySelectorAll('.mover');
-  var len = items.length;
-  var phaseInt = document.body.scrollTop / 1250;
+  var items = document.querySelectorAll('.mover'); // Chache items
+  var len = items.length; // Cache length
+  var phaseInt = document.body.scrollTop / 1250; // Move calulation out of loop
 
   for (var i = 0; i < len; i++) {
-    var phase = Math.sin(phaseInt + (i % 5));
-    items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
+    var move = Math.sin(phaseInt + (i % 5)) * 100 + items[i].basicLeft; // calculations are done individually
+    items[i].style.left = move + 'px';
   }
 
   updatePositionsTick = false;
-  // User Timing API to the rescue again. Seriously, it's worth learning.
-  // Super easy to create custom metrics.
-  window.performance.mark("mark_end_frame");
-  window.performance.measure("measure_frame_duration", "mark_start_frame", "mark_end_frame");
-  if (frame % 10 === 0) {
-    var timesToUpdatePosition = window.performance.getEntriesByName("measure_frame_duration");
-    logAverageFrame(timesToUpdatePosition);
-  }
-}
-
-// Moves the sliding background pizzas based on scroll position
-function updatePositions_VERYOLD() {
-  frame++;
-  window.performance.mark("mark_start_frame");
-
-  var items = document.querySelectorAll('.mover');
-  for (var i = 0; i < items.length; i++) {
-    var phase = Math.sin((document.body.scrollTop / 1250) + (i % 5));
-    items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
-  }
-
-  updatePositionsTick = false;
-  // User Timing API to the rescue again. Seriously, it's worth learning.
-  // Super easy to create custom metrics.
-  window.performance.mark("mark_end_frame");
-  window.performance.measure("measure_frame_duration", "mark_start_frame", "mark_end_frame");
-  if (frame % 10 === 0) {
-    var timesToUpdatePosition = window.performance.getEntriesByName("measure_frame_duration");
-    logAverageFrame(timesToUpdatePosition);
-  }
-}
-
-// Moves the sliding background pizzas based on scroll position
-function updatePositions_NEW() {
-  frame++;
-  window.performance.mark("mark_start_frame");
-
-  // Move calculation's that will always answer the same outside of the loop
-  var phaseInt = document.body.scrollTop / 1250;
-
-  var items = document.querySelectorAll('.mover');
-
-  // cache length as it won't change during a single loop
-  var l = items.length;
-
-  for (var i = 0; i < l; i++) {
-    //Work out movement
-    var phase = Math.sin(phaseInt + i % 5) * 100;
-
-    // Using translate to allow faster painting and rendering.
-    items[i].style.transform = 'translateX(' + phase + 'px)';
-  }
-  
-
-  updatePositionsTick = false;
-
 
   // User Timing API to the rescue again. Seriously, it's worth learning.
   // Super easy to create custom metrics.
@@ -588,48 +536,6 @@ function updatePositions_NEW() {
   }
 }
 
-// Attempted many ways of speeding up updatePostions. Settled on this and _OLD
-// Under highload testing (1000 pizzas / no painting) I couldn't find any obvious speed difference for JS execution using timeline and CPU profile
-// the Performance mark showed this to avg between 0.2ms and 0.3ms. While _OLD was getting 0.3ms to 0.4ms.(No painting.)
-// So I decided on this one, just because it was the last one I thought of.
-// It has to look up data from 2 objects each time, but doesn't have to do math in loop.
-function updatePositions_OLD() {
-  frame++;
-  window.performance.mark("mark_start_frame");
-
-  // Move calculation's that will always answer the same outside of the loop
-  var phaseInt = document.body.scrollTop / 1250;
-
-  // Create phase out of loop and put in an array to be looked up later
-  var phases = [];
-  phases.push(Math.sin(phaseInt + 0) * 100);
-  phases.push(Math.sin(phaseInt + 1) * 100);
-  phases.push(Math.sin(phaseInt + 2) * 100);
-  phases.push(Math.sin(phaseInt + 3) * 100); 
-  phases.push(Math.sin(phaseInt + 4) * 100);
-
-  var items = document.querySelectorAll('.mover');
-
-  // cache length as it won't change during a single loop
-  var l = items.length;
-
-  for (var i = 0; i < l; i++) {
-
-    // Use the special phase property added during creation of object to find correct phase from array
-    items[i].style.transform = 'translateX(' + phases[items[i].phase] + 'px)';
-  }
-
-  updatePositionsTick = false; // Used to ensure updatePosition is only executed after it's finished the previous calculations.
-
-  // User Timing API to the rescue again. Seriously, it's worth learning.
-  // Super easy to create custom metrics.
-  window.performance.mark("mark_end_frame");
-  window.performance.measure("measure_frame_duration", "mark_start_frame", "mark_end_frame");
-  if (frame % 10 === 0) {
-    var timesToUpdatePosition = window.performance.getEntriesByName("measure_frame_duration");
-    logAverageFrame(timesToUpdatePosition);
-  }
-}
 
 function createBGPizza() {
   var cols = 8;
@@ -639,13 +545,13 @@ function createBGPizza() {
 
   for (var i = 0; i < bgPizzasToGen; i++) { // Generating pizzas based on screen size instead of a default 200.
     var elem = document.createElement('img');
+    var left = (i % cols) * s;
     elem.className = 'mover'
     elem.src = "images/pizza-small.png"; // Stop the browser from resizing image
     elem.style.height = "100px";
     elem.style.width = "73.333px";
-    elem.style.left = (i % cols) * s + 'px';
-    elem.phase = i % 5; // Added a phase number here when it was created to be looked up later
-    elem.basicLeft = (i % cols) * s; // Replaced with above, simplify the formula in movement loop.
+    elem.style.left = left + 'px';
+    elem.basicLeft = left;
     elem.style.top = (Math.floor(i / cols) * s) + 'px';
     document.querySelector("#movingPizzas1").appendChild(elem);
   }
