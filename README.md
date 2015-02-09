@@ -35,6 +35,8 @@ By far the most important optimisation for FPS in Chrome was a CSS hack by David
 
 While the final code may not be as future proof, as the assignment was to optomise for speed I made the decision to go with style.left over translate. Not using translate also means losing the subpixel movement, however in practise as this is a background image moving in a horizontal line it doesn't make much difference.
 
+Finally for download speed, the CSS and JS was minified and place onto the single page. Images were compressed and resized.
+
 See code for more comments.
 
 # References #
