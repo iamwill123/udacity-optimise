@@ -33,11 +33,18 @@ form {
   position: fixed;
   width: 256px;
   z-index: -1;
+  left: 0px;
+  /* Hack from David Walsh. How force div onto it's own layer. Massive speed up for painting time */
+  /* http://davidwalsh.name/translate3d */
+  transform: translatex(0);
+  backface-visibility: hidden;
+  perspective: 1000;
 }
 
 .randomPizzaContainer {
   float: left;
   display: flex;
+  height: 325px;
 }
 
 .randomPizzaContainer:after {
@@ -48,4 +55,16 @@ form {
 
  .container {
   background-color: rgba(240, 60, 60, 0.8);
+}
+
+.pizzaSmall {
+  width: 25%;
+}
+
+.pizzaMedium {
+  width: 33%;
+}
+
+.pizzaLarge {
+  width: 50%;
 }

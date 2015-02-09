@@ -1,3 +1,39 @@
+# Part 1 - Solution - PageSpeed #
+* Minify CSS and placed into page head. Except for print css which now uses media tag. To minimise amount of downloads
+* Change JS loading to async
+* Change image format, size and compression
+
+# Part 2 - Solution - Pizza FPS #
+## Change Pizza Size ##
+I created 3 classes to handle the 3 sizes. Then used a nested for statement cycle through all elements and add the new size class and also cycle through the current classes and remove any classes left over.
+
+## Background parallax scroller ##
+### Background creation ###
+Orignal 200 pizzas were being created no matter how many were to be displayed on screen.
+So I changed this to instead check the screen size, and ensure that only enough pizza divs were created to fill the screen.
+On window resize this is recalculated and new pizzas are made.
+
+### Background movement ###
+I spent a lot of time trying different styles of loops and moving calculations out of the for loop. Trying while loops and other things.
+At one point adding a lot of the calcuations at the time of the creation of the div.
+However, I found that no matter what I did it had very little affect. At least in the chrome browser.
+
+I spent a lot of time reading, and one of the first optomisitions I made was to use 'transform: translateX' instead of 'styel.left'.
+There were a number of website that claims this would make it much faster and so I went with it. However in later testing I found it to be generally slower,
+especially in other browsers.
+
+Maybe the most interesting thing I saw from testing was that each browser and platform can find different JS code faster.
+For example, using translateX was over 50% slower on IE11. On chrome mobile, the test that had been coming last on desktop browsers was the fastest. On chrome desktop none of the rewrite made any real difference.
+
+Another realisation was that when optomising code, you need to check each optimisation individual if you haven't tried them before. I just assumed translateX would be faster because that is what it was telling me and then made other optimisations at the same time. Thus I couldn't see what change was making improvements when I was testing the code.
+
+By far the most important optimisation for FPS in Chrome was a CSS hack by David Walsh (http://davidwalsh.name/translate3d). It forced each pizza to be in it's own composite layer and this saw a huge speed increase. When I first tried this it didn't work as I applied the translateX inline and therefore was appearing after page load. It turned out before Chrome rendered the DOM CSSOM it needed to know that this were 'transform' layers.
+
+While the final code may not be as future proof, as the assignment was to optomise for speed I made the decision to go with style.left over translate.
+
+
+
+
 ## Website Performance Optimization portfolio project
 
 Your challenge, if you wish to accept it (and we sure hope you will), is to optimize this online portfolio for speed! In particular, optimize the critical rendering path and make this page render as quickly as possible by applying the techniques you've picked up in the [Critical Rendering Path course](https://www.udacity.com/course/ud884).
